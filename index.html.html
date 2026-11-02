@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aura – Fast Food Menu</title>
+<style>
+:root{--bg:#fff8f0;--card:#fff;--text:#2a1a14;--muted:#7a6a60;--accent:#e8431f;--gold:#ffb300;--line:#f0e2d4;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17100d;--card:#241915;--text:#fbeee3;--muted:#b8a496;--line:#3a2b24}}
+:root[data-theme="dark"]{--bg:#17100d;--card:#241915;--text:#fbeee3;--muted:#b8a496;--line:#3a2b24}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:120px}
+body{background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;line-height:1.5;padding-bottom:80px}
+header{text-align:center;padding:36px 16px 22px;background:linear-gradient(160deg,#e8431f,#ff7a2f 60%,#ffb300);color:#fff;position:relative}
+#theme{position:absolute;top:14px;right:14px;border:0;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.25);font-size:1.3rem;cursor:pointer}
+.logo{width:110px;height:110px;margin:0 auto 6px;display:block}
+.ring{transform-origin:60px 60px;animation:spin 12s linear infinite}
+.ring2{transform-origin:60px 60px;animation:spin 8s linear infinite reverse}
+.core{transform-origin:60px 60px;animation:pulse 2.4s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.12)}}
+h1{font-size:2.4rem;letter-spacing:.35em;padding-left:.35em;font-weight:800}
+.tag{letter-spacing:.12em;font-size:.85rem;text-transform:uppercase}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 12px 8px}
+#q{width:100%;max-width:560px;display:block;margin:0 auto 8px;padding:11px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:1rem;outline:none}
+#q:focus{border-color:var(--accent)}
+#tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+#tabs button{flex:none;padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:.9rem;font-weight:600;cursor:pointer}
+#tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+main{max-width:980px;margin:0 auto;padding:8px 16px}
+h2{font-size:1.4rem;margin:22px 0 12px;display:flex;align-items:center;gap:10px}
+h2::after{content:"";flex:1;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;gap:12px;transition:transform .2s,box-shadow .2s}
+.item:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(232,67,31,.15)}
+.emo{font-size:2.1rem;flex:none;width:54px;height:54px;border-radius:14px;background:var(--bg);display:grid;place-items:center}
+.info{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;gap:8px;font-weight:700}
+.price{color:var(--accent);white-space:nowrap}
+.desc{color:var(--muted);font-size:.86rem;margin-top:2px}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.badge{font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--gold);color:#3a2300}
+.add{margin-left:auto;border:0;background:var(--accent);color:#fff;font-weight:700;border-radius:99px;padding:5px 14px;cursor:pointer}
+.add:active{transform:scale(.94)}
+.act{margin-left:auto}
+.step{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--accent);border-radius:99px;padding:2px}
+.step button{width:30px;height:30px;border:0;border-radius:50%;background:var(--accent);color:#fff;font-size:1.1rem;font-weight:700;cursor:pointer}
+.step b{min-width:26px;text-align:center}
+.pop{animation:pop .25s}
+@keyframes pop{50%{transform:scale(1.15)}}
+#chips{display:flex;gap:8px;overflow-x:auto;padding-top:8px}
+#chips button{flex:none;padding:5px 12px;border-radius:99px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-size:.8rem;cursor:pointer}
+#chips button.on{background:var(--gold);color:#3a2300;border-style:solid;border-color:var(--gold)}
+#empty{text-align:center;color:var(--muted);padding:40px 0;display:none}
+.combo{background:linear-gradient(135deg,#e8431f,#ff7a2f);color:#fff;border-radius:18px;padding:18px;margin-top:26px;text-align:center}
+#cart{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:560px;margin:0 auto;background:var(--text);color:var(--bg);border-radius:16px;padding:12px 16px;display:none;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.3);z-index:9}
+#cart button{border:0;border-radius:99px;padding:6px 14px;font-weight:700;cursor:pointer;background:var(--accent);color:#fff}
+#tb{border-radius:99px;border:0;padding:6px 8px;font-weight:700;background:var(--bg);color:var(--text)}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:24px 16px;border-top:1px solid var(--line);margin-top:30px}
+footer b{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){.ring,.ring2,.core{animation:none}}
+</style>
+</head>
+<body>
+<header>
+<button id="theme" aria-label="Toggle dark mode">🌙</button>
+<svg class="logo" viewBox="0 0 120 120" aria-label="Aura logo">
+<circle class="ring" cx="60" cy="60" r="54" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="14 10" stroke-linecap="round"/>
+<circle class="ring2" cx="60" cy="60" r="44" fill="none" stroke="#ffe08a" stroke-width="2.5" stroke-dasharray="4 8" stroke-linecap="round"/>
+<g class="core"><circle cx="60" cy="60" r="32" fill="#fff"/>
+<path d="M60 30 L78 84 H68 L64 72 H56 L52 84 H42 Z M60 46 L57.5 63 H62.5 Z" fill="#e8431f" fill-rule="evenodd"/></g>
+</svg>
+<h1>AURA</h1>
+<p class="tag">Fast Food · Fresh · Fire-Grilled</p>
+</header>
+<div class="bar">
+<input id="q" type="search" placeholder="🔍 Search the menu…" autocomplete="off">
+<div id="tabs"></div>
+<div id="chips"><button data-t="Spicy">🌶️ Spicy</button><button data-t="Vegetarian">🌱 Vegetarian</button><button data-t="Best Seller">⭐ Best Seller</button></div>
+</div>
+<main>
+<div id="menu"></div>
+<p id="empty">😕 Nothing found. Try another word.</p>
+</main>
+<div id="cart"><span id="ct"></span><span><select id="tb" aria-label="Table number"></select> <button id="wa">📲 Order</button> <button id="clr">Clear</button></span></div>
+<footer>Aura Restaurant · Open daily<br>Created by <b>Shkar Amanj</b></footer>
+<script>
+var CATS=[["burgers","🍔","Burgers"],["chicken","🍗","Chicken"],["wraps","🌯","Wraps & Sandwiches"],["sides","🍟","Sides"],["drinks","🥤","Drinks"],["desserts","🍩","Desserts"]];
+var ITEMS=[
+["burgers","🍔","Aura Signature",7.5,"Double beef, cheddar, caramelized onion, special Aura sauce.","Best Seller"],
+["burgers","🧀","Classic Cheeseburger",5.5,"Grilled beef patty, cheese, pickles, lettuce, tomato.",""],
+["burgers","🌶️","Fire Burger",6.9,"Beef, jalapeño, pepper jack, spicy mayo.","Spicy"],
+["burgers","🥓","BBQ Bacon Burger",7.2,"Beef, crispy bacon, BBQ sauce, onion rings.",""],
+["chicken","🍗","Crispy Chicken Burger",5.9,"Golden fried fillet, lettuce, garlic mayo.",""],
+["chicken","🔥","Hot Wings (8 pcs)",6,"Tossed in hot sauce, served with ranch dip.","Spicy"],
+["chicken","🐔","Chicken Nuggets (10 pcs)",4.8,"Tender bites with your choice of dip.",""],
+["chicken","🍱","Chicken Strips Box",6.5,"4 strips, fries and coleslaw.",""],
+["wraps","🌯","Chicken Shawarma Wrap",4.5,"Marinated chicken, pickles, garlic sauce.","Popular"],
+["wraps","🥪","Club Sandwich",5.6,"Chicken, egg, cheese, lettuce, toasted bread.",""],
+["wraps","🌭","Aura Hot Dog",3.9,"Beef sausage, mustard, ketchup, crispy onions.",""],
+["wraps","🥙","Falafel Wrap",3.8,"Falafel, tahini, fresh vegetables.","Vegetarian"],
+["sides","🍟","French Fries",2,"Crispy, lightly salted.",""],
+["sides","🧀","Cheese Fries",3.2,"Fries topped with melted cheese sauce.",""],
+["sides","🧅","Onion Rings",2.6,"Golden, crunchy batter.",""],
+["sides","🥗","Coleslaw",1.5,"Fresh, creamy cabbage salad.","Vegetarian"],
+["drinks","🥤","Soft Drinks",1.2,"Cola, orange, lemon-lime.",""],
+["drinks","🍋","Fresh Lemonade",2.2,"Fresh-squeezed with mint.",""],
+["drinks","🥛","Milkshake",3.5,"Vanilla, chocolate or strawberry.","Best Seller"],
+["drinks","💧","Water",0.5,"Still mineral water.",""],
+["desserts","🍦","Soft Serve Ice Cream",1.8,"With chocolate or caramel topping.",""],
+["desserts","🍪","Choco Chip Cookie",1.5,"Freshly baked, soft center.",""],
+["desserts","🧇","Nutella Waffle",3.3,"Warm waffle with Nutella and banana.",""]
+];
+var cur="all",term="",tag="",cart={};
+var PHONE="9647701180429";
+var $=function(i){return document.getElementById(i)};
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function tabs(){
+  var t=[["all","✨","All"]].concat(CATS);
+  $("tabs").innerHTML=t.map(function(c){return '<button data-c="'+c[0]+'" class="'+(c[0]===cur?"on":"")+'">'+c[1]+" "+esc(c[2])+"</button>"}).join("");
+}
+function render(){
+  var q=term.trim().toLowerCase(),html="",n=0;
+  CATS.forEach(function(c){
+    if(!q&&cur!=="all"&&cur!==c[0])return;
+    var list=ITEMS.map(function(it,i){return[it,i]}).filter(function(p){
+      var it=p[0];if(it[0]!==c[0])return false;
+      if(tag&&it[5]!==tag)return false;
+      return !q||(it[2]+" "+it[4]+" "+it[5]).toLowerCase().indexOf(q)>-1;
+    });
+    if(!list.length)return;
+    n+=list.length;
+    html+="<h2>"+c[1]+" "+esc(c[2])+'</h2><div class="grid">'+list.map(function(p){
+      var it=p[0];
+      return '<div class="item"><div class="emo">'+it[1]+'</div><div class="info"><div class="top"><span>'+esc(it[2])+'</span><span class="price">$'+it[3].toFixed(2)+'</span></div><div class="desc">'+esc(it[4])+'</div><div class="row">'+(it[5]?'<span class="badge">'+it[5]+'</span>':"")+'<span class="act" data-i="'+p[1]+'">'+act(p[1])+'</span></div></div></div>';
+    }).join("")+"</div>";
+  });
+  $("menu").innerHTML=html;
+  $("empty").style.display=n?"none":"block";
+}
+function updCart(){
+  var cnt=0,tot=0;
+  for(var k in cart){cnt+=cart[k];tot+=cart[k]*ITEMS[k][3]}
+  $("cart").style.display=cnt?"flex":"none";
+  $("ct").textContent="🛒 "+cnt+" item"+(cnt>1?"s":"")+" · $"+tot.toFixed(2);
+}
+$("tabs").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  cur=b.getAttribute("data-c");term="";$("q").value="";
+  tabs();render();window.scrollTo({top:0,behavior:"smooth"});
+});
+$("q").addEventListener("input",function(){term=this.value;render()});
+function act(i){var q=cart[i]||0;return q?'<span class="step"><button data-a="dec" aria-label="Remove one">−</button><b>'+q+'</b><button data-a="inc" aria-label="Add one">+</button></span>':'<button class="add" data-a="inc">+ Add</button>'}
+$("menu").addEventListener("click",function(e){
+  var b=e.target.closest("button[data-a]");if(!b)return;
+  var s=b.closest(".act"),i=s.getAttribute("data-i");
+  cart[i]=Math.max(0,(cart[i]||0)+(b.getAttribute("data-a")==="inc"?1:-1));
+  if(!cart[i])delete cart[i];
+  s.innerHTML=act(i);s.classList.remove("pop");void s.offsetWidth;s.classList.add("pop");
+  updCart();
+});
+$("clr").addEventListener("click",function(){cart={};updCart();render()});
+$("chips").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  var t=b.getAttribute("data-t");tag=(tag===t)?"":t;
+  Array.prototype.forEach.call($("chips").children,function(x){x.className=(x.getAttribute("data-t")===tag)?"on":""});
+  render();
+});
+$("wa").addEventListener("click",function(){
+  var lines=[],tot=0;
+  for(var k in cart){lines.push(cart[k]+" x "+ITEMS[k][2]);tot+=cart[k]*ITEMS[k][3]}
+  var tb=$("tb").value;
+  if(!tb){$("ct").textContent="⚠️ Please choose your table number";$("tb").focus();return}
+  var msg="Aura order - Table "+tb+":\n"+lines.join("\n")+"\nTotal: $"+tot.toFixed(2);
+  window.open("https://wa.me/"+PHONE+"?text="+encodeURIComponent(msg),"_blank");
+});
+var root=document.documentElement;
+function isDark(){
+  var t=root.getAttribute("data-theme");
+  if(t)return t==="dark";
+  return window.matchMedia&&window.matchMedia("(prefers-color-scheme:dark)").matches;
+}
+function setIcon(){$("theme").textContent=isDark()?"☀️":"🌙"}
+try{var s=localStorage.getItem("aura-theme");if(s)root.setAttribute("data-theme",s)}catch(e){}
+$("theme").addEventListener("click",function(){
+  var n=isDark()?"light":"dark";root.setAttribute("data-theme",n);
+  try{localStorage.setItem("aura-theme",n)}catch(e){}
+  setIcon();
+});
+var o='<option value="">Table…</option>';for(var n=1;n<=10;n++)o+='<option>'+n+'</option>';$("tb").innerHTML=o;
+try{var m=/[?&]t=(\d+)/.exec(location.search);if(m&&+m[1]>=1&&+m[1]<=10){$("tb").value=m[1];$("tb").style.display="none";var l=document.createElement("span");l.textContent="🪑 Table "+m[1];l.style.fontWeight="700";l.style.marginRight="6px";$("tb").parentNode.insertBefore(l,$("tb"))}}catch(e){}
+setIcon();tabs();render();
+</script>
+</body>
+</html>
